@@ -9,7 +9,10 @@
     <script type='text/javascript' src='js/tool.js'></script>
     <script type='text/javascript' src='js/sky.js'></script>
     <script type='text/javascript' src='js/land.js'></script>
-<script type = 'text/javascript' src = 'js/pipe.js'></script>
+    <script type='text/javascript' src='js/pipe.js'></script>
+    <script type='text/javascript' src='js/bird.js'></script>
+    <script type='text/javascript' src='js/text.js'></script>
+
 
 </head>
 
@@ -36,7 +39,8 @@
             var context = canv.getContext("2d");
 
 
-            var roles = [];
+            var roles = [],
+                timer = null;
 
             //背景
             for (var i = 0; i < tools.getRoleNum(canv.width, imgObjs.sky.width); i++) {
@@ -52,18 +56,18 @@
             };
 
             //管道
-            for(var i = 0; i<tools.getRoleNum(canv.width, imgObjs.pipeUp.width*2.5); i++){
-                var RandomNum = Math.random()*150+50
+            for (var i = 0; i < tools.getRoleNum(canv.width, imgObjs.pipeUp.width * 2.5); i++) {
+                var RandomNum = Math.random() * 150 + 50
                 roles.push(
                     new Pipe({
-                         context: context,
+                        context: context,
                         imgUp: imgObjs.pipeUp,
                         imgDown: imgObjs.pipeDown,
-                        x: imgObjs.pipeUp.width*2.5 * i+400,
-                        yDown: -imgObjs.pipeDown.height+ RandomNum,
-                        yUp:RandomNum+150,
+                        x: imgObjs.pipeUp.width * 2.5 * i + 400,
+                        yDown: -imgObjs.pipeDown.height + RandomNum,
+                        yUp: RandomNum + 150,
                         speed: 4,
-                        speedPlus:0.01
+                        speedPlus: 0.01
                     })
                 )
             };
@@ -81,25 +85,55 @@
                     })
                 )
             };
-            
+
+
+
+            //文字
+            roles.push(
+                new Text({
+                    context: context,
+                    x: canv.width,
+                    y: 0
+                })
+            );
+
             //鸟
-
-            
+            roles.push(
+                new Bird({
+                    context: context,
+                    img: imgObjs.bird,
+                    x: 100,
+                    y: 100,
+                    speed: 10,
+                    speedPlus: 0.4
+                })
+            );
             //绘画
-            setInterval(function () {
+            timer = setInterval(function () {
 
-
+                context.beginPath()
                 context.clearRect(0, 0, canv.width, canv.height);
 
                 roles.forEach(function (role, i) {
                     role.init()
                 })
 
-
+                if (birdIsDead()) {
+                    clearInterval(timer);
+                }
 
             }, 1000 / 30)
 
-
+            function birdIsDead() {
+                if (context.isPointInPath(
+                        roles[roles.length - 1].x + 1 / 2 * roles[roles.length - 1].img.width * 1 / 3,
+                        roles[roles.length - 1].y + 1 / 2 * roles[roles.length - 1].img.height) ||
+                    roles[roles.length - 1].y + 1 / 2 * roles[roles.length - 1].img.height < 0 ||
+                    roles[roles.length - 1].y + 1 / 2 * roles[roles.length - 1].img.height > canv.height - imgObjs.land
+                    .height) {
+                    return true;
+                }
+            }
 
 
 

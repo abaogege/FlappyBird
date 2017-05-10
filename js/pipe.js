@@ -31,8 +31,25 @@ Pipe.prototype = {
         this.update()
     },
     draw:function () {
+        //图像
         this.context.drawImage(this.imgUp,this.x,this.yUp)
         this.context.drawImage(this.imgDown,this.x,this.yDown);
+        //下方管路径
+        this.context.moveTo(this.x,this.context.canvas.height);
+        this.context.lineTo(this.x,this.yUp);
+        this.context.lineTo(this.x+this.imgUp.width,this.yUp);
+        this.context.lineTo(this.x+this.imgUp.width,this.context.canvas.height);
+        this.context.closePath();
+
+        //上方管路径
+        this.context.moveTo(this.x,0);
+        this.context.lineTo(this.x,this.yDown+this.imgDown.height);
+        this.context.lineTo(this.x+this.imgDown.width,this.yDown+this.imgDown.height);
+        this.context.lineTo(this.x+this.imgDown.width,0);
+        this.context.closePath();
+        
+        // this.context.strokeStyle="black";
+        // this.context.stroke();
     },
     update:function () {  
         this.x -= this.speed;
