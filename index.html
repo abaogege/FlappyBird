@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script type='text/javascript' src='js/tool.js'></script>
+    <script type='text/javascript' src='js/sky.js'></script>
+    <script type='text/javascript' src='js/land.js'></script>
+<script type = 'text/javascript' src = 'js/pipe.js'></script>
+
+</head>
+
+<body>
+</body>
+<script>
+    window.onload = function () {
+        tools.imgLoads({
+            bird: "img/bird.png",
+            land: "img/land.png",
+            pipeDown: "img/pipeDown.png",
+            pipeUp: "img/pipeUp.png",
+            sky: "img/sky.png",
+        }, main);
+
+
+        //游戏主函数
+        function main(imgObjs) {
+            //添加画布,设置画布宽高，获取绘画环境
+            var canv = document.createElement("canvas");
+            document.body.appendChild(canv);
+            canv.width = imgObjs.sky.width;
+            canv.height = imgObjs.sky.height;
+            var context = canv.getContext("2d");
+
+
+            var roles = [];
+
+            //背景
+            for (var i = 0; i < tools.getRoleNum(canv.width, imgObjs.sky.width); i++) {
+                roles.push(
+                    new Sky({
+                        context: context,
+                        img: imgObjs.sky,
+                        x: imgObjs.sky.width * i,
+                        y: 0,
+                        speed: 4
+                    })
+                )
+            };
+
+            //管道
+            for(var i = 0; i<tools.getRoleNum(canv.width, imgObjs.pipeUp.width*2.5); i++){
+                var RandomNum = Math.random()*150+50
+                roles.push(
+                    new Pipe({
+                         context: context,
+                        imgUp: imgObjs.pipeUp,
+                        imgDown: imgObjs.pipeDown,
+                        x: imgObjs.pipeUp.width*2.5 * i+400,
+                        yDown: -imgObjs.pipeDown.height+ RandomNum,
+                        yUp:RandomNum+150,
+                        speed: 4,
+                        speedPlus:0.01
+                    })
+                )
+            };
+
+
+            //陆地
+            for (var i = 0; i < tools.getRoleNum(canv.width, imgObjs.land.width); i++) {
+                roles.push(
+                    new Land({
+                        context: context,
+                        img: imgObjs.land,
+                        x: imgObjs.land.width * i,
+                        y: canv.height - imgObjs.land.height,
+                        speed: 4
+                    })
+                )
+            };
+            
+            //鸟
+
+            
+            //绘画
+            setInterval(function () {
+
+
+                context.clearRect(0, 0, canv.width, canv.height);
+
+                roles.forEach(function (role, i) {
+                    role.init()
+                })
+
+
+
+            }, 1000 / 30)
+
+
+
+
+
+        }
+
+
+    }
+</script>
+
+</html>
